@@ -23,21 +23,20 @@ int main(void)
 	timer1_setup();
 	timer2_setup();
 
-	uint16_t pot_adc = 0;
+	volatile uint16_t pot_adc = 0;
 	
 	sei(); // inicializa interrupções
 	
     while (1) 
     {			
-		switch (1 & (PORT_OPTO1 >> PIN_OPTO1))
+		if (1 & (PORT_OPTO1 >> PIN_OPTO1))
 		{
-			case 1:
 				if (last_state_opto1 != 1)
 				{
 					last_state_opto1 = 1; // muda estado utilizado para testar alterações
-					pot_adc = (ADCH << 8) | (ADCL << 0); // obtém valor 10 bits do adc (necessita testar)
+					pot_adc = (ADC_POT_H << 7) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
 					OCR0A = MAGIC_OPTO1_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0 
-					if (!(PORT_OPTO2 & (1 << PIN_OPTO2))) // teste para sequência de fase
+					if (!(1 & (PORT_OPTO2 >> PIN_OPTO2))) // teste para sequência de fase
 					{
 						// ordem de fase trocada
 						phase_sequence_opto1 = COUNTER_CLOCKWISE;
@@ -50,15 +49,15 @@ int main(void)
 					timer0_reset();
 					timer0_start();
 				}
-			break;
-			
-			case 0:
+		}
+		else if (0 & (PORT_OPTO1 >> PIN_OPTO1))
+		{
 				if (last_state_opto1 != 0)
 				{
 					last_state_opto1 = 0; // muda estado utilizado para testar alterações
-					pot_adc = (ADCH << 8) | (ADCL << 0); // obtém valor 10 bits do adc (necessita testar)
+					pot_adc = (ADC_POT_H << 7) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
 					OCR0A = MAGIC_OPTO1_NEG + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
-					if (!(PORT_OPTO3 & (1 << PIN_OPTO3)))
+					if (!(1 & (PORT_OPTO3 >> PIN_OPTO3)))
 					{
 						// ordem de fase trocada
 						phase_sequence_opto1 = COUNTER_CLOCKWISE;
@@ -71,22 +70,16 @@ int main(void)
 					timer0_reset();
 					timer0_start();
 				}
-			break;
-			
-			default:
-			break;
 		}
 		
-		
-		switch (1 & (PORT_OPTO2 >> PIN_OPTO2))
+		if (1 & (PORT_OPTO2 >> PIN_OPTO2))
 		{
-			case 1:
 			if (last_state_opto2 != 1)
 			{
 				last_state_opto2 = 1; // muda estado utilizado para testar alterações
-				pot_adc = (ADCH << 7) | (ADCL << 0); // obtém valor 10 bits do adc (necessita testar)
-				OCR1AL = MAGIC_OPTO1_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
-				if (!(PORT_OPTO3 & (1 << PIN_OPTO3))) // teste para sequência de fase
+				pot_adc = (ADC_POT_H << 7) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
+				OCR1AL = MAGIC_OPTO2_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
+				if (!(1 & (PORT_OPTO3 >> PIN_OPTO3))) // teste para sequência de fase
 				{
 					// ordem de fase trocada
 					phase_sequence_opto2 = COUNTER_CLOCKWISE;
@@ -99,15 +92,15 @@ int main(void)
 				timer1_reset();
 				timer1_start();
 			}
-			break;
-			
-			case 0:
+		}
+		else if (0 & (PORT_OPTO2 >> PIN_OPTO2))
+		{
 			if (last_state_opto2 != 0)
 			{
 				last_state_opto2 = 0; // muda estado utilizado para testar alterações
 				pot_adc = (ADC_POT_H << 7) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
-				OCR1AL = MAGIC_OPTO1_NEG + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
-				if (!(PORT_OPTO1 & (1 << PIN_OPTO1))) // teste para sequência de fase
+				OCR1AL = MAGIC_OPTO2_NEG + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
+				if (!(1 & (PORT_OPTO1 >> PIN_OPTO1))) // teste para sequência de fase
 				{
 					// ordem de fase trocada
 					phase_sequence_opto2 = COUNTER_CLOCKWISE;
@@ -120,22 +113,17 @@ int main(void)
 				timer1_reset();
 				timer1_start();
 			}
-			break;
-			
-			default:
-			break;
 		}
 		
 		
-		switch (1 & (PORT_OPTO3 >> PIN_OPTO3))
+		if (1 & (PORT_OPTO3 >> PIN_OPTO3))
 		{
-			case 1:
 			if (last_state_opto3 != 1)
 			{
 				last_state_opto3 = 1; // muda estado utilizado para testar alterações
-				pot_adc = (ADCH << 7) | (ADCL << 0); // obtém valor 10 bits do adc (necessita testar)
-				OCR2A = MAGIC_OPTO1_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
-				if (!(PORT_OPTO1 & (1 << PIN_OPTO1))) // teste para sequência de fase
+				pot_adc = (ADC_POT_H << 7) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
+				OCR2A = MAGIC_OPTO3_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
+				if (!(1 & (PORT_OPTO1 >> PIN_OPTO1))) // teste para sequência de fase
 				{
 					// ordem de fase trocada
 					phase_sequence_opto3 = COUNTER_CLOCKWISE;
@@ -148,15 +136,15 @@ int main(void)
 				timer2_reset();
 				timer2_start();
 			}
-			break;
-			
-			case 0:
+		}
+		else if (0 & (PORT_OPTO3 >> PIN_OPTO3))
+		{
 			if (last_state_opto3 != 0)
 			{
 				last_state_opto3 = 0; // muda estado utilizado para testar alterações
-				pot_adc = (ADCH << 8) | (ADCL << 0); // obtém valor 10 bits do adc (necessita testar)
-				OCR2A = MAGIC_OPTO1_NEG + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
-				if (!(PORT_OPTO2 & (1 << PIN_OPTO2))) // teste para sequência de fase
+				pot_adc = (ADC_POT_H << 7) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
+				OCR2A = MAGIC_OPTO3_NEG + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
+				if (!(1 & (PORT_OPTO2 >> PIN_OPTO2))) // teste para sequência de fase
 				{
 					// ordem de fase trocada
 					phase_sequence_opto3 = COUNTER_CLOCKWISE;
@@ -169,10 +157,6 @@ int main(void)
 				timer2_reset();
 				timer2_start();
 			}
-			break;
-			
-			default:
-			break;
 		}
 		
 
