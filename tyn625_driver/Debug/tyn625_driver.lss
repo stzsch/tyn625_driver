@@ -146,7 +146,7 @@ static inline void gpio_setup(void)
 	DDR_MOC4 |= (1 << PIN_MOC4);
   c2:	53 9a       	sbi	0x0a, 3	; 10
 	DDR_MOC5 |= (1 << PIN_MOC5);
-  c4:	52 9a       	sbi	0x0a, 2	; 10
+  c4:	51 9a       	sbi	0x0a, 1	; 10
 	DDR_MOC6 |= (1 << PIN_MOC6);
   c6:	3c 9a       	sbi	0x07, 4	; 7
 /* Funções relacionadas ao uso dos timers */
@@ -706,7 +706,7 @@ static inline void timer2_start(void)
 			PORT_MOC1 |= (1 << PIN_MOC1); // setar pino moc
  32e:	5a 9a       	sbi	0x0b, 2	; 11
 			PORT_MOC5 |= (1 << PIN_MOC5); // setar pino moc
- 330:	5a 9a       	sbi	0x0b, 2	; 11
+ 330:	59 9a       	sbi	0x0b, 1	; 11
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
@@ -721,7 +721,7 @@ static inline void timer2_start(void)
 			PORT_MOC1 &= ~(1 << PIN_MOC1); // des setar pino
  33a:	5a 98       	cbi	0x0b, 2	; 11
 			PORT_MOC5 &= ~(1 << PIN_MOC5); // des setar pino
- 33c:	5a 98       	cbi	0x0b, 2	; 11
+ 33c:	59 98       	cbi	0x0b, 1	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
  33e:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
 			break;
@@ -750,7 +750,7 @@ static inline void timer2_start(void)
 			PORT_MOC2 |= (1 << PIN_MOC2); // setar pino moc
  35a:	58 9a       	sbi	0x0b, 0	; 11
 			PORT_MOC5 |= (1 << PIN_MOC5); // setar pino moc
- 35c:	5a 9a       	sbi	0x0b, 2	; 11
+ 35c:	59 9a       	sbi	0x0b, 1	; 11
  35e:	95 e8       	ldi	r25, 0x85	; 133
  360:	9a 95       	dec	r25
  362:	f1 f7       	brne	.-4      	; 0x360 <main+0x2d0>
@@ -759,7 +759,7 @@ static inline void timer2_start(void)
 			PORT_MOC2 &= ~(1 << PIN_MOC2); // des setar pino
  366:	58 98       	cbi	0x0b, 0	; 11
 			PORT_MOC5 &= ~(1 << PIN_MOC5); // des setar pino
- 368:	5a 98       	cbi	0x0b, 2	; 11
+ 368:	59 98       	cbi	0x0b, 1	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
  36a:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
 			break;
@@ -807,7 +807,7 @@ static inline void timer2_start(void)
 			PORT_MOC3 |= (1 << PIN_MOC3); // setar pino moc
  39c:	43 9a       	sbi	0x08, 3	; 8
 			PORT_MOC5 |= (1 << PIN_MOC5); // setar pino moc
- 39e:	5a 9a       	sbi	0x0b, 2	; 11
+ 39e:	59 9a       	sbi	0x0b, 1	; 11
  3a0:	85 e8       	ldi	r24, 0x85	; 133
  3a2:	8a 95       	dec	r24
  3a4:	f1 f7       	brne	.-4      	; 0x3a2 <main+0x312>
@@ -816,7 +816,7 @@ static inline void timer2_start(void)
 			PORT_MOC3 &= ~(1 << PIN_MOC3); // des setar pino
  3a8:	43 98       	cbi	0x08, 3	; 8
 			PORT_MOC5 &= ~(1 << PIN_MOC5); // des setar pino
- 3aa:	5a 98       	cbi	0x0b, 2	; 11
+ 3aa:	59 98       	cbi	0x0b, 1	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
  3ac:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
 			break;
