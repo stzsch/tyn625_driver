@@ -29,7 +29,7 @@ int main(void)
 	
     while (1) 
     {			
-		switch (PORT_OPTO1 & (1 << PIN_OPTO1))
+		switch (1 & (PORT_OPTO1 >> PIN_OPTO1))
 		{
 			case 1:
 				if (last_state_opto1 != 1)
@@ -78,7 +78,7 @@ int main(void)
 		}
 		
 		
-		switch (PORT_OPTO2 & (1 << PIN_OPTO2))
+		switch (1 & (PORT_OPTO2 >> PIN_OPTO2))
 		{
 			case 1:
 			if (last_state_opto2 != 1)
@@ -127,7 +127,7 @@ int main(void)
 		}
 		
 		
-		switch (PORT_OPTO3 & (1 << PIN_OPTO3))
+		switch (1 & (PORT_OPTO3 >> PIN_OPTO3))
 		{
 			case 1:
 			if (last_state_opto3 != 1)
@@ -151,9 +151,9 @@ int main(void)
 			break;
 			
 			case 0:
-			if (last_state_opto1 != 0)
+			if (last_state_opto3 != 0)
 			{
-				last_state_opto1 = 0; // muda estado utilizado para testar alterações
+				last_state_opto3 = 0; // muda estado utilizado para testar alterações
 				pot_adc = (ADCH << 8) | (ADCL << 0); // obtém valor 10 bits do adc (necessita testar)
 				OCR2A = MAGIC_OPTO1_NEG + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
 				if (!(PORT_OPTO2 & (1 << PIN_OPTO2))) // teste para sequência de fase
@@ -175,9 +175,6 @@ int main(void)
 			break;
 		}
 		
-
-		// decidir se vou usar isso aqui ou simplesmente os interrupts
-
 
 		switch (scr_trigger)
 		{
