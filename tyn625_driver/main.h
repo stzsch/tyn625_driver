@@ -45,7 +45,7 @@ volatile sequence phase_sequence_opto2;
 volatile sequence phase_sequence_opto3;
 
 
-static inline void clock_setup(void)
+inline void clock_setup(void)
 {
 	// caso o clock seja 16 MHz, divisor de 2 para todo o Atmega
 	CLKPR=0x80;

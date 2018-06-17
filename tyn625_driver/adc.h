@@ -9,7 +9,7 @@
 #include "main.h"
 
 
-static inline void adc_setup(void)
+inline void adc_setup(void)
 {
 	/* Seleção de modo de tensão de referência. */
 	ADMUX |= (1 << REFS0); // Utiliza Avcc como referência

@@ -51,7 +51,7 @@
 
 #define MOC_SIGNAL_DURATION_US	50
 
-static inline void gpio_setup(void)
+inline void gpio_setup(void)
 {
 	// Configurar pinos dos MOCs como saídas
 	DDR_MOC1 |= (1 << PIN_MOC1);

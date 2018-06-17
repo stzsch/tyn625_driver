@@ -55,68 +55,68 @@ solução 2 --> pode-se colocar um if para o caso acima de 1020 (170x6) para não d
 /* Funções relacionadas ao uso dos timers */
 
 /* Funções Timer 0 */
-static inline void timer0_setup(void)
+inline void timer0_setup(void)
 {
 	TIMSK0 |= (1 << OCIE0A); // ativar interrupt do output compare 0A
 }
-static inline void timer0_start(void)
+inline void timer0_start(void)
 {
 	TCCR0B |= (1 << CS02); // ativar timer com prescaler 256
 }
-static inline void timer0_stop(void)
+inline void timer0_stop(void)
 {
 	TCCR0B &= ~(1 << CS02); // desativar timer
 }
-static inline void timer0_set(uint8_t value)
+inline void timer0_set(uint8_t value)
 {
 	TCNT0 = value;
 }
-static inline void timer0_reset(void)
+inline void timer0_reset(void)
 {
 	TCNT0 = 0;
 }
 
 /* Funções Timer 1 */
-static inline void timer1_setup(void)
+inline void timer1_setup(void)
 {
 	TIMSK1 |= (1 << OCIE1A);
 }
-static inline void timer1_start(void)
+inline void timer1_start(void)
 {
 	TCCR1B |= (1 << CS12); // ativar timer com prescaler 256
 }
-static inline void timer1_stop(void)
+inline void timer1_stop(void)
 {
 	TCCR0B &= ~(1 << CS12); // desativar timer
 }
-static inline void timer1_set(uint8_t value) // somente os 8 lower bits
+inline void timer1_set(uint8_t value) // somente os 8 lower bits
 {
 	TCNT1L = value;
 }
-static inline void timer1_reset(void)
+inline void timer1_reset(void)
 {
 	TCNT1H = 0;
 	TCNT1L = 0;
 }
 
 /* Funções Timer 2 */
-static inline void timer2_setup(void)
+inline void timer2_setup(void)
 {
 	TIMSK2 |= (1 << OCIE2A);
 }
-static inline void timer2_start(void)
+inline void timer2_start(void)
 {
 	TCCR2B |= (1 << CS22) | (1 << CS21);
 }
-static inline void timer2_stop(void)
+inline void timer2_stop(void)
 {
 	TCCR2B &= ~(1 << CS22) | (1 << CS21);
 }
-static inline void timer2_set(uint8_t value)
+inline void timer2_set(uint8_t value)
 {
 	TCNT2 = value;
 }
-static inline void timer2_reset(void)
+inline void timer2_reset(void)
 {
 	TCNT2 = 0;
 }
