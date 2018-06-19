@@ -43,7 +43,8 @@ ISR(TIMER0_COMPA_vect)
 			scr_trigger = TRIGGER_34;
 		}		
 	}
-	
+	// des-setar a flag de timer
+	timer0_flag = 0;
 }
 
 ISR(TIMER1_COMPA_vect)
@@ -77,6 +78,8 @@ ISR(TIMER1_COMPA_vect)
 			scr_trigger = TRIGGER_15;
 		}
 	}
+	// des-setar a flag de timer
+	timer1_flag = 0;
 }
 
 ISR(TIMER2_COMPA_vect)
@@ -111,4 +114,6 @@ ISR(TIMER2_COMPA_vect)
 			scr_trigger = TRIGGER_26;
 		}
 	}
+	// des-setar a flag de timer
+	timer2_flag = 0;
 }
