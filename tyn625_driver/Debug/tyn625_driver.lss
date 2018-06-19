@@ -3,31 +3,31 @@ tyn625_driver.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  000004e6  2**0
+  0 .data         00000000  00800100  00800100  000004f2  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000472  00000000  00000000  00000074  2**1
+  1 .text         0000047e  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000000a  00800100  00800100  000004e6  2**0
+  2 .bss          0000000a  00800100  00800100  000004f2  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000004e6  2**0
+  3 .comment      00000030  00000000  00000000  000004f2  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000518  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000524  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000050  00000000  00000000  00000558  2**0
+  5 .debug_aranges 00000050  00000000  00000000  00000564  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000cbc  00000000  00000000  000005a8  2**0
+  6 .debug_info   00000cd4  00000000  00000000  000005b4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000007a7  00000000  00000000  00001264  2**0
+  7 .debug_abbrev 000007a7  00000000  00000000  00001288  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000074a  00000000  00000000  00001a0b  2**0
+  8 .debug_line   00000758  00000000  00000000  00001a2f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000000b4  00000000  00000000  00002158  2**2
+  9 .debug_frame  000000b4  00000000  00000000  00002188  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000586  00000000  00000000  0000220c  2**0
+ 10 .debug_str    00000592  00000000  00000000  0000223c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000002ba  00000000  00000000  00002792  2**0
+ 11 .debug_loc    000002ba  00000000  00000000  000027ce  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000090  00000000  00000000  00002a4c  2**0
+ 12 .debug_ranges 00000090  00000000  00000000  00002a88  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -40,14 +40,14 @@ Disassembly of section .text:
   10:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   14:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   18:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
-  1c:	0c 94 ee 01 	jmp	0x3dc	; 0x3dc <__vector_7>
+  1c:	0c 94 f4 01 	jmp	0x3e8	; 0x3e8 <__vector_7>
   20:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   24:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   28:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
-  2c:	0c 94 bb 01 	jmp	0x376	; 0x376 <__vector_11>
+  2c:	0c 94 c1 01 	jmp	0x382	; 0x382 <__vector_11>
   30:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   34:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
-  38:	0c 94 87 01 	jmp	0x30e	; 0x30e <__vector_14>
+  38:	0c 94 8d 01 	jmp	0x31a	; 0x31a <__vector_14>
   3c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   40:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   44:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
@@ -82,7 +82,7 @@ Disassembly of section .text:
   80:	b2 07       	cpc	r27, r18
   82:	e1 f7       	brne	.-8      	; 0x7c <.do_clear_bss_loop>
   84:	0e 94 48 00 	call	0x90	; 0x90 <main>
-  88:	0c 94 37 02 	jmp	0x46e	; 0x46e <_exit>
+  88:	0c 94 3d 02 	jmp	0x47a	; 0x47a <_exit>
 
 0000008c <__bad_interrupt>:
   8c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -99,875 +99,888 @@ int main(void)
   94:	00 d0       	rcall	.+0      	; 0x96 <main+0x6>
   96:	cd b7       	in	r28, 0x3d	; 61
   98:	de b7       	in	r29, 0x3e	; 62
+volatile uint8_t timer2_flag;
+
+static inline void clock_setup(void)
+{
+	// caso o clock seja 16 MHz, divisor de 2 para todo o Atmega
+	CLKPR=0x80;
+  9a:	e1 e6       	ldi	r30, 0x61	; 97
+  9c:	f0 e0       	ldi	r31, 0x00	; 0
+  9e:	80 e8       	ldi	r24, 0x80	; 128
+  a0:	80 83       	st	Z, r24
+	CLKPR=0x01;
+  a2:	81 e0       	ldi	r24, 0x01	; 1
+  a4:	80 83       	st	Z, r24
 
 
 inline void adc_setup(void)
 {
 	/* Seleção de modo de tensão de referência. */
 	ADMUX |= (1 << REFS0); // Utiliza Avcc como referência
-  9a:	ec e7       	ldi	r30, 0x7C	; 124
-  9c:	f0 e0       	ldi	r31, 0x00	; 0
-  9e:	80 81       	ld	r24, Z
-  a0:	80 64       	ori	r24, 0x40	; 64
-  a2:	80 83       	st	Z, r24
+  a6:	ec e7       	ldi	r30, 0x7C	; 124
+  a8:	f0 e0       	ldi	r31, 0x00	; 0
+  aa:	80 81       	ld	r24, Z
+  ac:	80 64       	ori	r24, 0x40	; 64
+  ae:	80 83       	st	Z, r24
 	
 	/* Seleção das portas ligadas ao mux */
 	ADMUX |= (1 << MUX1); // ADC2
-  a4:	80 81       	ld	r24, Z
-  a6:	82 60       	ori	r24, 0x02	; 2
-  a8:	80 83       	st	Z, r24
+  b0:	80 81       	ld	r24, Z
+  b2:	82 60       	ori	r24, 0x02	; 2
+  b4:	80 83       	st	Z, r24
 	
 	/* Setup do prescaler, deve estar entre 50 KHz e 200 KHz */
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1); // Para 8 MHz, um divisor de 64 gera 125 KHz
-  aa:	ea e7       	ldi	r30, 0x7A	; 122
-  ac:	f0 e0       	ldi	r31, 0x00	; 0
-  ae:	80 81       	ld	r24, Z
-  b0:	86 60       	ori	r24, 0x06	; 6
-  b2:	80 83       	st	Z, r24
+  b6:	ea e7       	ldi	r30, 0x7A	; 122
+  b8:	f0 e0       	ldi	r31, 0x00	; 0
+  ba:	80 81       	ld	r24, Z
+  bc:	86 60       	ori	r24, 0x06	; 6
+  be:	80 83       	st	Z, r24
 	
 	/* Seleciona modo de funcionamento do ADC. */
 	ADCSRA |= (1 << ADATE); // Ativa auto trigger do ADC
-  b4:	80 81       	ld	r24, Z
-  b6:	80 62       	ori	r24, 0x20	; 32
-  b8:	80 83       	st	Z, r24
+  c0:	80 81       	ld	r24, Z
+  c2:	80 62       	ori	r24, 0x20	; 32
+  c4:	80 83       	st	Z, r24
 	// ADCSRB &= ~(1 << ADTS2) & ~(1 << ADTS1) & ~(1 << ADTS0) & // Modo Free Running
 	
 	/* Ativa o ADC */
 	ADCSRA |= (1 << ADEN);
-  ba:	80 81       	ld	r24, Z
-  bc:	80 68       	ori	r24, 0x80	; 128
-  be:	80 83       	st	Z, r24
+  c6:	80 81       	ld	r24, Z
+  c8:	80 68       	ori	r24, 0x80	; 128
+  ca:	80 83       	st	Z, r24
 
 	/* Inicia a primeira conversão em modo Free Running */
 	ADCSRA |= (1 << ADSC);
-  c0:	80 81       	ld	r24, Z
-  c2:	80 64       	ori	r24, 0x40	; 64
-  c4:	80 83       	st	Z, r24
+  cc:	80 81       	ld	r24, Z
+  ce:	80 64       	ori	r24, 0x40	; 64
+  d0:	80 83       	st	Z, r24
 #define MOC_SIGNAL_DURATION_US	50
 
 static inline void gpio_setup(void)
 {
 	// Configurar pinos dos MOCs como saídas
 	DDR_MOC1 |= (1 << PIN_MOC1);
-  c6:	52 9a       	sbi	0x0a, 2	; 10
+  d2:	52 9a       	sbi	0x0a, 2	; 10
 	DDR_MOC2 |= (1 << PIN_MOC2);
-  c8:	50 9a       	sbi	0x0a, 0	; 10
+  d4:	50 9a       	sbi	0x0a, 0	; 10
 	DDR_MOC3 |= (1 << PIN_MOC3);
-  ca:	3b 9a       	sbi	0x07, 3	; 7
+  d6:	3b 9a       	sbi	0x07, 3	; 7
 	DDR_MOC4 |= (1 << PIN_MOC4);
-  cc:	53 9a       	sbi	0x0a, 3	; 10
+  d8:	53 9a       	sbi	0x0a, 3	; 10
 	DDR_MOC5 |= (1 << PIN_MOC5);
-  ce:	51 9a       	sbi	0x0a, 1	; 10
+  da:	51 9a       	sbi	0x0a, 1	; 10
 	DDR_MOC6 |= (1 << PIN_MOC6);
-  d0:	3c 9a       	sbi	0x07, 4	; 7
+  dc:	3c 9a       	sbi	0x07, 4	; 7
 	
 	DDRB = 0x00;
-  d2:	14 b8       	out	0x04, r1	; 4
+  de:	14 b8       	out	0x04, r1	; 4
 	PORTB = 0x00;
-  d4:	15 b8       	out	0x05, r1	; 5
+  e0:	15 b8       	out	0x05, r1	; 5
 /* Funções relacionadas ao uso dos timers */
 
 /* Funções Timer 0 */
 inline void timer0_setup(void)
 {
 	TIMSK0 |= (1 << OCIE0A); // ativar interrupt do output compare 0A
-  d6:	ee e6       	ldi	r30, 0x6E	; 110
-  d8:	f0 e0       	ldi	r31, 0x00	; 0
-  da:	80 81       	ld	r24, Z
-  dc:	82 60       	ori	r24, 0x02	; 2
-  de:	80 83       	st	Z, r24
+  e2:	ee e6       	ldi	r30, 0x6E	; 110
+  e4:	f0 e0       	ldi	r31, 0x00	; 0
+  e6:	80 81       	ld	r24, Z
+  e8:	82 60       	ori	r24, 0x02	; 2
+  ea:	80 83       	st	Z, r24
 }
 
 /* Funções Timer 1 */
 inline void timer1_setup(void)
 {
 	TIMSK1 |= (1 << OCIE1A);
-  e0:	ef e6       	ldi	r30, 0x6F	; 111
-  e2:	f0 e0       	ldi	r31, 0x00	; 0
-  e4:	80 81       	ld	r24, Z
-  e6:	82 60       	ori	r24, 0x02	; 2
-  e8:	80 83       	st	Z, r24
+  ec:	ef e6       	ldi	r30, 0x6F	; 111
+  ee:	f0 e0       	ldi	r31, 0x00	; 0
+  f0:	80 81       	ld	r24, Z
+  f2:	82 60       	ori	r24, 0x02	; 2
+  f4:	80 83       	st	Z, r24
 }
 
 /* Funções Timer 2 */
 inline void timer2_setup(void)
 {
 	TIMSK2 |= (1 << OCIE2A);
-  ea:	e0 e7       	ldi	r30, 0x70	; 112
-  ec:	f0 e0       	ldi	r31, 0x00	; 0
-  ee:	80 81       	ld	r24, Z
-  f0:	82 60       	ori	r24, 0x02	; 2
-  f2:	80 83       	st	Z, r24
+  f6:	e0 e7       	ldi	r30, 0x70	; 112
+  f8:	f0 e0       	ldi	r31, 0x00	; 0
+  fa:	80 81       	ld	r24, Z
+  fc:	82 60       	ori	r24, 0x02	; 2
+  fe:	80 83       	st	Z, r24
 	gpio_setup();
 	timer0_setup();
 	timer1_setup();
 	timer2_setup();
 
 	volatile uint16_t pot_adc = 0;
-  f4:	1a 82       	std	Y+2, r1	; 0x02
-  f6:	19 82       	std	Y+1, r1	; 0x01
+ 100:	1a 82       	std	Y+2, r1	; 0x02
+ 102:	19 82       	std	Y+1, r1	; 0x01
 	
 	sei(); // inicializa interrupções
-  f8:	78 94       	sei
+ 104:	78 94       	sei
 	
 	timer0_flag = 0;
-  fa:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <timer0_flag>
+ 106:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <timer0_flag>
 	timer1_flag = 0;
-  fe:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
+ 10a:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
 	timer2_flag = 0;
- 102:	10 92 05 01 	sts	0x0105, r1	; 0x800105 <timer2_flag>
+ 10e:	10 92 05 01 	sts	0x0105, r1	; 0x800105 <timer2_flag>
 		if (1 & (PORT_OPTO1 >> PIN_OPTO1))
 		{
 				if ( (last_state_opto1 != 1) && (~timer0_flag) )
 				{
 					last_state_opto1 = 1; // muda estado utilizado para testar alterações
 					pot_adc = (ADC_POT_H << 8) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
- 106:	49 e7       	ldi	r20, 0x79	; 121
- 108:	50 e0       	ldi	r21, 0x00	; 0
- 10a:	e8 e7       	ldi	r30, 0x78	; 120
- 10c:	f0 e0       	ldi	r31, 0x00	; 0
+ 112:	49 e7       	ldi	r20, 0x79	; 121
+ 114:	50 e0       	ldi	r21, 0x00	; 0
+ 116:	e8 e7       	ldi	r30, 0x78	; 120
+ 118:	f0 e0       	ldi	r31, 0x00	; 0
 		{
 			if ( (last_state_opto2 != 1)  && (~timer1_flag)  )
 			{
 				last_state_opto2 = 1; // muda estado utilizado para testar alterações
 				pot_adc = (ADC_POT_H << 8) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
 				OCR1AL = MAGIC_OPTO2_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
- 10e:	0f 2e       	mov	r0, r31
- 110:	f8 e8       	ldi	r31, 0x88	; 136
- 112:	af 2e       	mov	r10, r31
- 114:	b1 2c       	mov	r11, r1
- 116:	f0 2d       	mov	r31, r0
+ 11a:	0f 2e       	mov	r0, r31
+ 11c:	f8 e8       	ldi	r31, 0x88	; 136
+ 11e:	af 2e       	mov	r10, r31
+ 120:	b1 2c       	mov	r11, r1
+ 122:	f0 2d       	mov	r31, r0
 {
 	TCNT1L = value;
 }
 inline void timer1_reset(void)
 {
 	TCNT1H = 0;
- 118:	0f 2e       	mov	r0, r31
- 11a:	f5 e8       	ldi	r31, 0x85	; 133
- 11c:	8f 2e       	mov	r8, r31
- 11e:	91 2c       	mov	r9, r1
- 120:	f0 2d       	mov	r31, r0
+ 124:	0f 2e       	mov	r0, r31
+ 126:	f5 e8       	ldi	r31, 0x85	; 133
+ 128:	8f 2e       	mov	r8, r31
+ 12a:	91 2c       	mov	r9, r1
+ 12c:	f0 2d       	mov	r31, r0
 	TCNT1L = 0;
- 122:	0f 2e       	mov	r0, r31
- 124:	f4 e8       	ldi	r31, 0x84	; 132
- 126:	6f 2e       	mov	r6, r31
- 128:	71 2c       	mov	r7, r1
- 12a:	f0 2d       	mov	r31, r0
+ 12e:	0f 2e       	mov	r0, r31
+ 130:	f4 e8       	ldi	r31, 0x84	; 132
+ 132:	6f 2e       	mov	r6, r31
+ 134:	71 2c       	mov	r7, r1
+ 136:	f0 2d       	mov	r31, r0
 {
 	TIMSK1 |= (1 << OCIE1A);
 }
 inline void timer1_start(void)
 {
 	TCCR1B |= (1 << CS12); // ativar timer com prescaler 256
- 12c:	0f 2e       	mov	r0, r31
- 12e:	f1 e8       	ldi	r31, 0x81	; 129
- 130:	ef 2e       	mov	r14, r31
- 132:	f1 2c       	mov	r15, r1
- 134:	f0 2d       	mov	r31, r0
+ 138:	0f 2e       	mov	r0, r31
+ 13a:	f1 e8       	ldi	r31, 0x81	; 129
+ 13c:	ef 2e       	mov	r14, r31
+ 13e:	f1 2c       	mov	r15, r1
+ 140:	f0 2d       	mov	r31, r0
 		{
 			if ( (last_state_opto3 != 1)  && (~timer2_flag) )
 			{
 				last_state_opto3 = 1; // muda estado utilizado para testar alterações
 				pot_adc = (ADC_POT_H << 8) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
 				OCR2A = MAGIC_OPTO3_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
- 136:	0f 2e       	mov	r0, r31
- 138:	f3 eb       	ldi	r31, 0xB3	; 179
- 13a:	cf 2e       	mov	r12, r31
- 13c:	d1 2c       	mov	r13, r1
- 13e:	f0 2d       	mov	r31, r0
+ 142:	0f 2e       	mov	r0, r31
+ 144:	f3 eb       	ldi	r31, 0xB3	; 179
+ 146:	cf 2e       	mov	r12, r31
+ 148:	d1 2c       	mov	r13, r1
+ 14a:	f0 2d       	mov	r31, r0
 {
 	TCNT2 = value;
 }
 inline void timer2_reset(void)
 {
 	TCNT2 = 0;
- 140:	0f 2e       	mov	r0, r31
- 142:	f2 eb       	ldi	r31, 0xB2	; 178
- 144:	4f 2e       	mov	r4, r31
- 146:	51 2c       	mov	r5, r1
- 148:	f0 2d       	mov	r31, r0
+ 14c:	0f 2e       	mov	r0, r31
+ 14e:	f2 eb       	ldi	r31, 0xB2	; 178
+ 150:	4f 2e       	mov	r4, r31
+ 152:	51 2c       	mov	r5, r1
+ 154:	f0 2d       	mov	r31, r0
 {
 	TIMSK2 |= (1 << OCIE2A);
 }
 inline void timer2_start(void)
 {
 	TCCR2B |= (1 << CS22) | (1 << CS21);
- 14a:	01 eb       	ldi	r16, 0xB1	; 177
- 14c:	10 e0       	ldi	r17, 0x00	; 0
+ 156:	01 eb       	ldi	r16, 0xB1	; 177
+ 158:	10 e0       	ldi	r17, 0x00	; 0
     {			
 		if (1 & (PORT_OPTO1 >> PIN_OPTO1))
 		{
 				if ( (last_state_opto1 != 1) && (~timer0_flag) )
 				{
 					last_state_opto1 = 1; // muda estado utilizado para testar alterações
- 14e:	33 24       	eor	r3, r3
- 150:	33 94       	inc	r3
+ 15a:	33 24       	eor	r3, r3
+ 15c:	33 94       	inc	r3
 	timer1_flag = 0;
 	timer2_flag = 0;
 	
     while (1) 
     {			
 		if (1 & (PORT_OPTO1 >> PIN_OPTO1))
- 152:	2b 9b       	sbis	0x05, 3	; 5
- 154:	29 c0       	rjmp	.+82     	; 0x1a8 <main+0x118>
+ 15e:	2b 9b       	sbis	0x05, 3	; 5
+ 160:	29 c0       	rjmp	.+82     	; 0x1b4 <main+0x124>
 		{
 				if ( (last_state_opto1 != 1) && (~timer0_flag) )
- 156:	80 91 03 01 	lds	r24, 0x0103	; 0x800103 <last_state_opto1>
- 15a:	81 30       	cpi	r24, 0x01	; 1
- 15c:	31 f1       	breq	.+76     	; 0x1aa <main+0x11a>
- 15e:	80 91 06 01 	lds	r24, 0x0106	; 0x800106 <timer0_flag>
+ 162:	80 91 03 01 	lds	r24, 0x0103	; 0x800103 <last_state_opto1>
+ 166:	81 30       	cpi	r24, 0x01	; 1
+ 168:	31 f1       	breq	.+76     	; 0x1b6 <main+0x126>
+ 16a:	80 91 06 01 	lds	r24, 0x0106	; 0x800106 <timer0_flag>
 				{
 					last_state_opto1 = 1; // muda estado utilizado para testar alterações
- 162:	30 92 03 01 	sts	0x0103, r3	; 0x800103 <last_state_opto1>
+ 16e:	30 92 03 01 	sts	0x0103, r3	; 0x800103 <last_state_opto1>
 					pot_adc = (ADC_POT_H << 8) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
- 166:	da 01       	movw	r26, r20
- 168:	2c 91       	ld	r18, X
- 16a:	80 81       	ld	r24, Z
- 16c:	90 e0       	ldi	r25, 0x00	; 0
- 16e:	92 2b       	or	r25, r18
- 170:	9a 83       	std	Y+2, r25	; 0x02
- 172:	89 83       	std	Y+1, r24	; 0x01
+ 172:	da 01       	movw	r26, r20
+ 174:	2c 91       	ld	r18, X
+ 176:	80 81       	ld	r24, Z
+ 178:	90 e0       	ldi	r25, 0x00	; 0
+ 17a:	92 2b       	or	r25, r18
+ 17c:	9a 83       	std	Y+2, r25	; 0x02
+ 17e:	89 83       	std	Y+1, r24	; 0x01
 					OCR0A = MAGIC_OPTO1_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0 
- 174:	29 81       	ldd	r18, Y+1	; 0x01
- 176:	3a 81       	ldd	r19, Y+2	; 0x02
- 178:	ab ea       	ldi	r26, 0xAB	; 171
- 17a:	ba ea       	ldi	r27, 0xAA	; 170
- 17c:	0e 94 28 02 	call	0x450	; 0x450 <__umulhisi3>
- 180:	96 95       	lsr	r25
- 182:	87 95       	ror	r24
- 184:	96 95       	lsr	r25
- 186:	87 95       	ror	r24
- 188:	8e 5a       	subi	r24, 0xAE	; 174
- 18a:	87 bd       	out	0x27, r24	; 39
+ 180:	29 81       	ldd	r18, Y+1	; 0x01
+ 182:	3a 81       	ldd	r19, Y+2	; 0x02
+ 184:	ab ea       	ldi	r26, 0xAB	; 171
+ 186:	ba ea       	ldi	r27, 0xAA	; 170
+ 188:	0e 94 2e 02 	call	0x45c	; 0x45c <__umulhisi3>
+ 18c:	96 95       	lsr	r25
+ 18e:	87 95       	ror	r24
+ 190:	96 95       	lsr	r25
+ 192:	87 95       	ror	r24
+ 194:	8e 5a       	subi	r24, 0xAE	; 174
+ 196:	87 bd       	out	0x27, r24	; 39
 					if (!(1 & (PORT_OPTO2 >> PIN_OPTO2))) // teste para sequência de fase
- 18c:	2a 99       	sbic	0x05, 2	; 5
- 18e:	03 c0       	rjmp	.+6      	; 0x196 <main+0x106>
+ 198:	2a 99       	sbic	0x05, 2	; 5
+ 19a:	03 c0       	rjmp	.+6      	; 0x1a2 <main+0x112>
 					{
 						// ordem de fase trocada
 						phase_sequence_opto1 = COUNTER_CLOCKWISE;
- 190:	30 92 09 01 	sts	0x0109, r3	; 0x800109 <phase_sequence_opto1>
- 194:	02 c0       	rjmp	.+4      	; 0x19a <main+0x10a>
+ 19c:	30 92 09 01 	sts	0x0109, r3	; 0x800109 <phase_sequence_opto1>
+ 1a0:	02 c0       	rjmp	.+4      	; 0x1a6 <main+0x116>
 					}
 					else
 					{
 						//ordem de fase normal
 						phase_sequence_opto1 = CLOCKWISE;
- 196:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <phase_sequence_opto1>
+ 1a2:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <phase_sequence_opto1>
 {
 	TCNT0 = value;
 }
 inline void timer0_reset(void)
 {
 	TCNT0 = 0;
- 19a:	16 bc       	out	0x26, r1	; 38
+ 1a6:	16 bc       	out	0x26, r1	; 38
 					}
 					timer0_reset();
 					timer0_flag = 1;
- 19c:	30 92 06 01 	sts	0x0106, r3	; 0x800106 <timer0_flag>
+ 1a8:	30 92 06 01 	sts	0x0106, r3	; 0x800106 <timer0_flag>
 {
 	TIMSK0 |= (1 << OCIE0A); // ativar interrupt do output compare 0A
 }
 inline void timer0_start(void)
 {
 	TCCR0B |= (1 << CS02); // ativar timer com prescaler 256
- 1a0:	85 b5       	in	r24, 0x25	; 37
- 1a2:	84 60       	ori	r24, 0x04	; 4
- 1a4:	85 bd       	out	0x25, r24	; 37
- 1a6:	01 c0       	rjmp	.+2      	; 0x1aa <main+0x11a>
+ 1ac:	85 b5       	in	r24, 0x25	; 37
+ 1ae:	84 60       	ori	r24, 0x04	; 4
+ 1b0:	85 bd       	out	0x25, r24	; 37
+ 1b2:	01 c0       	rjmp	.+2      	; 0x1b6 <main+0x126>
 					timer0_start();
 				}
 		}
 		else if (0 & (PORT_OPTO1 >> PIN_OPTO1))
- 1a8:	85 b1       	in	r24, 0x05	; 5
+ 1b4:	85 b1       	in	r24, 0x05	; 5
 					timer0_flag = 1;
 					timer0_start();
 				}
 		}
 		
 		if (1 & (PORT_OPTO2 >> PIN_OPTO2))
- 1aa:	2a 9b       	sbis	0x05, 2	; 5
- 1ac:	2e c0       	rjmp	.+92     	; 0x20a <main+0x17a>
+ 1b6:	2a 9b       	sbis	0x05, 2	; 5
+ 1b8:	2e c0       	rjmp	.+92     	; 0x216 <main+0x186>
 		{
 			if ( (last_state_opto2 != 1)  && (~timer1_flag)  )
- 1ae:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <last_state_opto2>
- 1b2:	81 30       	cpi	r24, 0x01	; 1
- 1b4:	59 f1       	breq	.+86     	; 0x20c <main+0x17c>
- 1b6:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 1ba:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <last_state_opto2>
+ 1be:	81 30       	cpi	r24, 0x01	; 1
+ 1c0:	59 f1       	breq	.+86     	; 0x218 <main+0x188>
+ 1c2:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
 			{
 				last_state_opto2 = 1; // muda estado utilizado para testar alterações
- 1ba:	30 92 08 01 	sts	0x0108, r3	; 0x800108 <last_state_opto2>
+ 1c6:	30 92 08 01 	sts	0x0108, r3	; 0x800108 <last_state_opto2>
 				pot_adc = (ADC_POT_H << 8) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
- 1be:	da 01       	movw	r26, r20
- 1c0:	2c 91       	ld	r18, X
- 1c2:	80 81       	ld	r24, Z
- 1c4:	90 e0       	ldi	r25, 0x00	; 0
- 1c6:	92 2b       	or	r25, r18
- 1c8:	9a 83       	std	Y+2, r25	; 0x02
- 1ca:	89 83       	std	Y+1, r24	; 0x01
+ 1ca:	da 01       	movw	r26, r20
+ 1cc:	2c 91       	ld	r18, X
+ 1ce:	80 81       	ld	r24, Z
+ 1d0:	90 e0       	ldi	r25, 0x00	; 0
+ 1d2:	92 2b       	or	r25, r18
+ 1d4:	9a 83       	std	Y+2, r25	; 0x02
+ 1d6:	89 83       	std	Y+1, r24	; 0x01
 				OCR1AL = MAGIC_OPTO2_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
- 1cc:	29 81       	ldd	r18, Y+1	; 0x01
- 1ce:	3a 81       	ldd	r19, Y+2	; 0x02
- 1d0:	ab ea       	ldi	r26, 0xAB	; 171
- 1d2:	ba ea       	ldi	r27, 0xAA	; 170
- 1d4:	0e 94 28 02 	call	0x450	; 0x450 <__umulhisi3>
- 1d8:	96 95       	lsr	r25
- 1da:	87 95       	ror	r24
- 1dc:	96 95       	lsr	r25
- 1de:	87 95       	ror	r24
- 1e0:	8e 5a       	subi	r24, 0xAE	; 174
- 1e2:	d5 01       	movw	r26, r10
- 1e4:	8c 93       	st	X, r24
+ 1d8:	29 81       	ldd	r18, Y+1	; 0x01
+ 1da:	3a 81       	ldd	r19, Y+2	; 0x02
+ 1dc:	ab ea       	ldi	r26, 0xAB	; 171
+ 1de:	ba ea       	ldi	r27, 0xAA	; 170
+ 1e0:	0e 94 2e 02 	call	0x45c	; 0x45c <__umulhisi3>
+ 1e4:	96 95       	lsr	r25
+ 1e6:	87 95       	ror	r24
+ 1e8:	96 95       	lsr	r25
+ 1ea:	87 95       	ror	r24
+ 1ec:	8e 5a       	subi	r24, 0xAE	; 174
+ 1ee:	d5 01       	movw	r26, r10
+ 1f0:	8c 93       	st	X, r24
 				if (!(1 & (PORT_OPTO3 >> PIN_OPTO3))) // teste para sequência de fase
- 1e6:	29 99       	sbic	0x05, 1	; 5
- 1e8:	03 c0       	rjmp	.+6      	; 0x1f0 <main+0x160>
+ 1f2:	29 99       	sbic	0x05, 1	; 5
+ 1f4:	03 c0       	rjmp	.+6      	; 0x1fc <main+0x16c>
 				{
 					// ordem de fase trocada
 					phase_sequence_opto2 = COUNTER_CLOCKWISE;
- 1ea:	30 92 07 01 	sts	0x0107, r3	; 0x800107 <phase_sequence_opto2>
- 1ee:	02 c0       	rjmp	.+4      	; 0x1f4 <main+0x164>
+ 1f6:	30 92 07 01 	sts	0x0107, r3	; 0x800107 <phase_sequence_opto2>
+ 1fa:	02 c0       	rjmp	.+4      	; 0x200 <main+0x170>
 				}
 				else
 				{
 					//ordem de fase normal
 					phase_sequence_opto2 = CLOCKWISE;
- 1f0:	10 92 07 01 	sts	0x0107, r1	; 0x800107 <phase_sequence_opto2>
+ 1fc:	10 92 07 01 	sts	0x0107, r1	; 0x800107 <phase_sequence_opto2>
 {
 	TCNT1L = value;
 }
 inline void timer1_reset(void)
 {
 	TCNT1H = 0;
- 1f4:	d4 01       	movw	r26, r8
- 1f6:	1c 92       	st	X, r1
+ 200:	d4 01       	movw	r26, r8
+ 202:	1c 92       	st	X, r1
 	TCNT1L = 0;
- 1f8:	d3 01       	movw	r26, r6
- 1fa:	1c 92       	st	X, r1
+ 204:	d3 01       	movw	r26, r6
+ 206:	1c 92       	st	X, r1
 				}
 				timer1_reset();
 				timer1_flag = 1;
- 1fc:	30 92 00 01 	sts	0x0100, r3	; 0x800100 <_edata>
+ 208:	30 92 00 01 	sts	0x0100, r3	; 0x800100 <_edata>
 {
 	TIMSK1 |= (1 << OCIE1A);
 }
 inline void timer1_start(void)
 {
 	TCCR1B |= (1 << CS12); // ativar timer com prescaler 256
- 200:	d7 01       	movw	r26, r14
- 202:	8c 91       	ld	r24, X
- 204:	84 60       	ori	r24, 0x04	; 4
- 206:	8c 93       	st	X, r24
- 208:	01 c0       	rjmp	.+2      	; 0x20c <main+0x17c>
+ 20c:	d7 01       	movw	r26, r14
+ 20e:	8c 91       	ld	r24, X
+ 210:	84 60       	ori	r24, 0x04	; 4
+ 212:	8c 93       	st	X, r24
+ 214:	01 c0       	rjmp	.+2      	; 0x218 <main+0x188>
 				timer1_start();
 			}
 		}
 		else if (0 & (PORT_OPTO2 >> PIN_OPTO2))
- 20a:	85 b1       	in	r24, 0x05	; 5
+ 216:	85 b1       	in	r24, 0x05	; 5
 				timer1_start();
 			}
 		}
 		
 		
 		if (1 & (PORT_OPTO3 >> PIN_OPTO3))
- 20c:	29 9b       	sbis	0x05, 1	; 5
- 20e:	2c c0       	rjmp	.+88     	; 0x268 <main+0x1d8>
+ 218:	29 9b       	sbis	0x05, 1	; 5
+ 21a:	2c c0       	rjmp	.+88     	; 0x274 <main+0x1e4>
 		{
 			if ( (last_state_opto3 != 1)  && (~timer2_flag) )
- 210:	80 91 04 01 	lds	r24, 0x0104	; 0x800104 <last_state_opto3>
- 214:	81 30       	cpi	r24, 0x01	; 1
- 216:	49 f1       	breq	.+82     	; 0x26a <main+0x1da>
- 218:	80 91 05 01 	lds	r24, 0x0105	; 0x800105 <timer2_flag>
+ 21c:	80 91 04 01 	lds	r24, 0x0104	; 0x800104 <last_state_opto3>
+ 220:	81 30       	cpi	r24, 0x01	; 1
+ 222:	49 f1       	breq	.+82     	; 0x276 <main+0x1e6>
+ 224:	80 91 05 01 	lds	r24, 0x0105	; 0x800105 <timer2_flag>
 			{
 				last_state_opto3 = 1; // muda estado utilizado para testar alterações
- 21c:	30 92 04 01 	sts	0x0104, r3	; 0x800104 <last_state_opto3>
+ 228:	30 92 04 01 	sts	0x0104, r3	; 0x800104 <last_state_opto3>
 				pot_adc = (ADC_POT_H << 8) | (ADC_POT_L << 0); // obtém valor 10 bits do adc (necessita testar)
- 220:	da 01       	movw	r26, r20
- 222:	2c 91       	ld	r18, X
- 224:	80 81       	ld	r24, Z
- 226:	90 e0       	ldi	r25, 0x00	; 0
- 228:	92 2b       	or	r25, r18
- 22a:	9a 83       	std	Y+2, r25	; 0x02
- 22c:	89 83       	std	Y+1, r24	; 0x01
+ 22c:	da 01       	movw	r26, r20
+ 22e:	2c 91       	ld	r18, X
+ 230:	80 81       	ld	r24, Z
+ 232:	90 e0       	ldi	r25, 0x00	; 0
+ 234:	92 2b       	or	r25, r18
+ 236:	9a 83       	std	Y+2, r25	; 0x02
+ 238:	89 83       	std	Y+1, r24	; 0x01
 				OCR2A = MAGIC_OPTO3_POS + pot_adc / POT_DIVISOR; // seta o compare para o timer 0
- 22e:	29 81       	ldd	r18, Y+1	; 0x01
- 230:	3a 81       	ldd	r19, Y+2	; 0x02
- 232:	ab ea       	ldi	r26, 0xAB	; 171
- 234:	ba ea       	ldi	r27, 0xAA	; 170
- 236:	0e 94 28 02 	call	0x450	; 0x450 <__umulhisi3>
- 23a:	96 95       	lsr	r25
- 23c:	87 95       	ror	r24
- 23e:	96 95       	lsr	r25
- 240:	87 95       	ror	r24
- 242:	8e 5a       	subi	r24, 0xAE	; 174
- 244:	d6 01       	movw	r26, r12
- 246:	8c 93       	st	X, r24
+ 23a:	29 81       	ldd	r18, Y+1	; 0x01
+ 23c:	3a 81       	ldd	r19, Y+2	; 0x02
+ 23e:	ab ea       	ldi	r26, 0xAB	; 171
+ 240:	ba ea       	ldi	r27, 0xAA	; 170
+ 242:	0e 94 2e 02 	call	0x45c	; 0x45c <__umulhisi3>
+ 246:	96 95       	lsr	r25
+ 248:	87 95       	ror	r24
+ 24a:	96 95       	lsr	r25
+ 24c:	87 95       	ror	r24
+ 24e:	8e 5a       	subi	r24, 0xAE	; 174
+ 250:	d6 01       	movw	r26, r12
+ 252:	8c 93       	st	X, r24
 				if (!(1 & (PORT_OPTO1 >> PIN_OPTO1))) // teste para sequência de fase
- 248:	2b 99       	sbic	0x05, 3	; 5
- 24a:	03 c0       	rjmp	.+6      	; 0x252 <main+0x1c2>
+ 254:	2b 99       	sbic	0x05, 3	; 5
+ 256:	03 c0       	rjmp	.+6      	; 0x25e <main+0x1ce>
 				{
 					// ordem de fase trocada
 					phase_sequence_opto3 = COUNTER_CLOCKWISE;
- 24c:	30 92 02 01 	sts	0x0102, r3	; 0x800102 <phase_sequence_opto3>
- 250:	02 c0       	rjmp	.+4      	; 0x256 <main+0x1c6>
+ 258:	30 92 02 01 	sts	0x0102, r3	; 0x800102 <phase_sequence_opto3>
+ 25c:	02 c0       	rjmp	.+4      	; 0x262 <main+0x1d2>
 				}
 				else
 				{
 					//ordem de fase normal
 					phase_sequence_opto3 = CLOCKWISE;
- 252:	10 92 02 01 	sts	0x0102, r1	; 0x800102 <phase_sequence_opto3>
+ 25e:	10 92 02 01 	sts	0x0102, r1	; 0x800102 <phase_sequence_opto3>
 {
 	TCNT2 = value;
 }
 inline void timer2_reset(void)
 {
 	TCNT2 = 0;
- 256:	d2 01       	movw	r26, r4
- 258:	1c 92       	st	X, r1
+ 262:	d2 01       	movw	r26, r4
+ 264:	1c 92       	st	X, r1
 				}
 				timer2_reset();
 				timer2_flag = 1;
- 25a:	30 92 05 01 	sts	0x0105, r3	; 0x800105 <timer2_flag>
+ 266:	30 92 05 01 	sts	0x0105, r3	; 0x800105 <timer2_flag>
 {
 	TIMSK2 |= (1 << OCIE2A);
 }
 inline void timer2_start(void)
 {
 	TCCR2B |= (1 << CS22) | (1 << CS21);
- 25e:	d8 01       	movw	r26, r16
- 260:	8c 91       	ld	r24, X
- 262:	86 60       	ori	r24, 0x06	; 6
- 264:	8c 93       	st	X, r24
- 266:	01 c0       	rjmp	.+2      	; 0x26a <main+0x1da>
+ 26a:	d8 01       	movw	r26, r16
+ 26c:	8c 91       	ld	r24, X
+ 26e:	86 60       	ori	r24, 0x06	; 6
+ 270:	8c 93       	st	X, r24
+ 272:	01 c0       	rjmp	.+2      	; 0x276 <main+0x1e6>
 				timer2_start();
 			}
 		}
 		else if (0 & (PORT_OPTO3 >> PIN_OPTO3))
- 268:	85 b1       	in	r24, 0x05	; 5
+ 274:	85 b1       	in	r24, 0x05	; 5
 				timer2_start();
 			}
 		}
 		
 
 		switch (scr_trigger)
- 26a:	80 91 01 01 	lds	r24, 0x0101	; 0x800101 <scr_trigger>
- 26e:	83 30       	cpi	r24, 0x03	; 3
- 270:	11 f1       	breq	.+68     	; 0x2b6 <main+0x226>
- 272:	28 f4       	brcc	.+10     	; 0x27e <main+0x1ee>
- 274:	81 30       	cpi	r24, 0x01	; 1
- 276:	49 f0       	breq	.+18     	; 0x28a <main+0x1fa>
- 278:	82 30       	cpi	r24, 0x02	; 2
- 27a:	91 f0       	breq	.+36     	; 0x2a0 <main+0x210>
- 27c:	6a cf       	rjmp	.-300    	; 0x152 <main+0xc2>
- 27e:	85 30       	cpi	r24, 0x05	; 5
- 280:	81 f1       	breq	.+96     	; 0x2e2 <main+0x252>
- 282:	20 f1       	brcs	.+72     	; 0x2cc <main+0x23c>
- 284:	86 30       	cpi	r24, 0x06	; 6
- 286:	c1 f1       	breq	.+112    	; 0x2f8 <main+0x268>
- 288:	64 cf       	rjmp	.-312    	; 0x152 <main+0xc2>
+ 276:	80 91 01 01 	lds	r24, 0x0101	; 0x800101 <scr_trigger>
+ 27a:	83 30       	cpi	r24, 0x03	; 3
+ 27c:	11 f1       	breq	.+68     	; 0x2c2 <main+0x232>
+ 27e:	28 f4       	brcc	.+10     	; 0x28a <main+0x1fa>
+ 280:	81 30       	cpi	r24, 0x01	; 1
+ 282:	49 f0       	breq	.+18     	; 0x296 <main+0x206>
+ 284:	82 30       	cpi	r24, 0x02	; 2
+ 286:	91 f0       	breq	.+36     	; 0x2ac <main+0x21c>
+ 288:	6a cf       	rjmp	.-300    	; 0x15e <main+0xce>
+ 28a:	85 30       	cpi	r24, 0x05	; 5
+ 28c:	81 f1       	breq	.+96     	; 0x2ee <main+0x25e>
+ 28e:	20 f1       	brcs	.+72     	; 0x2d8 <main+0x248>
+ 290:	86 30       	cpi	r24, 0x06	; 6
+ 292:	c1 f1       	breq	.+112    	; 0x304 <main+0x274>
+ 294:	64 cf       	rjmp	.-312    	; 0x15e <main+0xce>
 		{
 			case TRIGGER_15:
 			PORT_MOC1 |= (1 << PIN_MOC1); // setar pino moc
- 28a:	5a 9a       	sbi	0x0b, 2	; 11
+ 296:	5a 9a       	sbi	0x0b, 2	; 11
 			PORT_MOC5 |= (1 << PIN_MOC5); // setar pino moc
- 28c:	59 9a       	sbi	0x0b, 1	; 11
+ 298:	59 9a       	sbi	0x0b, 1	; 11
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 28e:	b5 e8       	ldi	r27, 0x85	; 133
- 290:	ba 95       	dec	r27
- 292:	f1 f7       	brne	.-4      	; 0x290 <main+0x200>
- 294:	00 00       	nop
+ 29a:	b5 e8       	ldi	r27, 0x85	; 133
+ 29c:	ba 95       	dec	r27
+ 29e:	f1 f7       	brne	.-4      	; 0x29c <main+0x20c>
+ 2a0:	00 00       	nop
 			_delay_us(MOC_SIGNAL_DURATION_US); // delay 50 us
 			PORT_MOC1 &= ~(1 << PIN_MOC1); // des setar pino
- 296:	5a 98       	cbi	0x0b, 2	; 11
+ 2a2:	5a 98       	cbi	0x0b, 2	; 11
 			PORT_MOC5 &= ~(1 << PIN_MOC5); // des setar pino
- 298:	59 98       	cbi	0x0b, 1	; 11
+ 2a4:	59 98       	cbi	0x0b, 1	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
- 29a:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
+ 2a6:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
 			break;
- 29e:	59 cf       	rjmp	.-334    	; 0x152 <main+0xc2>
+ 2aa:	59 cf       	rjmp	.-334    	; 0x15e <main+0xce>
 			
 			case TRIGGER_16:
 			PORT_MOC1 |= (1 << PIN_MOC1); // setar pino moc
- 2a0:	5a 9a       	sbi	0x0b, 2	; 11
+ 2ac:	5a 9a       	sbi	0x0b, 2	; 11
 			PORT_MOC6 |= (1 << PIN_MOC6); // setar pino moc
- 2a2:	44 9a       	sbi	0x08, 4	; 8
- 2a4:	85 e8       	ldi	r24, 0x85	; 133
- 2a6:	8a 95       	dec	r24
- 2a8:	f1 f7       	brne	.-4      	; 0x2a6 <main+0x216>
- 2aa:	00 00       	nop
+ 2ae:	44 9a       	sbi	0x08, 4	; 8
+ 2b0:	85 e8       	ldi	r24, 0x85	; 133
+ 2b2:	8a 95       	dec	r24
+ 2b4:	f1 f7       	brne	.-4      	; 0x2b2 <main+0x222>
+ 2b6:	00 00       	nop
 			_delay_us(MOC_SIGNAL_DURATION_US); // delay 50 us
 			PORT_MOC1 &= ~(1 << PIN_MOC1); // des setar pino
- 2ac:	5a 98       	cbi	0x0b, 2	; 11
+ 2b8:	5a 98       	cbi	0x0b, 2	; 11
 			PORT_MOC6 &= ~(1 << PIN_MOC6); // des setar pino
- 2ae:	44 98       	cbi	0x08, 4	; 8
+ 2ba:	44 98       	cbi	0x08, 4	; 8
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
- 2b0:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
+ 2bc:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
 			break;
- 2b4:	4e cf       	rjmp	.-356    	; 0x152 <main+0xc2>
+ 2c0:	4e cf       	rjmp	.-356    	; 0x15e <main+0xce>
 			
 			case TRIGGER_26:
 			PORT_MOC2 |= (1 << PIN_MOC2); // setar pino moc
- 2b6:	58 9a       	sbi	0x0b, 0	; 11
+ 2c2:	58 9a       	sbi	0x0b, 0	; 11
 			PORT_MOC5 |= (1 << PIN_MOC5); // setar pino moc
- 2b8:	59 9a       	sbi	0x0b, 1	; 11
- 2ba:	a5 e8       	ldi	r26, 0x85	; 133
- 2bc:	aa 95       	dec	r26
- 2be:	f1 f7       	brne	.-4      	; 0x2bc <main+0x22c>
- 2c0:	00 00       	nop
+ 2c4:	59 9a       	sbi	0x0b, 1	; 11
+ 2c6:	a5 e8       	ldi	r26, 0x85	; 133
+ 2c8:	aa 95       	dec	r26
+ 2ca:	f1 f7       	brne	.-4      	; 0x2c8 <main+0x238>
+ 2cc:	00 00       	nop
 			_delay_us(MOC_SIGNAL_DURATION_US); // delay 50 us
 			PORT_MOC2 &= ~(1 << PIN_MOC2); // des setar pino
- 2c2:	58 98       	cbi	0x0b, 0	; 11
+ 2ce:	58 98       	cbi	0x0b, 0	; 11
 			PORT_MOC5 &= ~(1 << PIN_MOC5); // des setar pino
- 2c4:	59 98       	cbi	0x0b, 1	; 11
+ 2d0:	59 98       	cbi	0x0b, 1	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
- 2c6:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
+ 2d2:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
 			break;
- 2ca:	43 cf       	rjmp	.-378    	; 0x152 <main+0xc2>
+ 2d6:	43 cf       	rjmp	.-378    	; 0x15e <main+0xce>
 			
 			case TRIGGER_24:
 			PORT_MOC2 |= (1 << PIN_MOC2); // setar pino moc
- 2cc:	58 9a       	sbi	0x0b, 0	; 11
+ 2d8:	58 9a       	sbi	0x0b, 0	; 11
 			PORT_MOC4 |= (1 << PIN_MOC4); // setar pino moc
- 2ce:	5b 9a       	sbi	0x0b, 3	; 11
- 2d0:	b5 e8       	ldi	r27, 0x85	; 133
- 2d2:	ba 95       	dec	r27
- 2d4:	f1 f7       	brne	.-4      	; 0x2d2 <main+0x242>
- 2d6:	00 00       	nop
+ 2da:	5b 9a       	sbi	0x0b, 3	; 11
+ 2dc:	b5 e8       	ldi	r27, 0x85	; 133
+ 2de:	ba 95       	dec	r27
+ 2e0:	f1 f7       	brne	.-4      	; 0x2de <main+0x24e>
+ 2e2:	00 00       	nop
 			_delay_us(MOC_SIGNAL_DURATION_US); // delay 50 us
 			PORT_MOC2 &= ~(1 << PIN_MOC2); // des setar pino
- 2d8:	58 98       	cbi	0x0b, 0	; 11
+ 2e4:	58 98       	cbi	0x0b, 0	; 11
 			PORT_MOC4 &= ~(1 << PIN_MOC4); // des setar pino
- 2da:	5b 98       	cbi	0x0b, 3	; 11
+ 2e6:	5b 98       	cbi	0x0b, 3	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
- 2dc:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
+ 2e8:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
 			break;
- 2e0:	38 cf       	rjmp	.-400    	; 0x152 <main+0xc2>
+ 2ec:	38 cf       	rjmp	.-400    	; 0x15e <main+0xce>
 			
 			case TRIGGER_34:
 			PORT_MOC3 |= (1 << PIN_MOC3); // setar pino moc
- 2e2:	43 9a       	sbi	0x08, 3	; 8
+ 2ee:	43 9a       	sbi	0x08, 3	; 8
 			PORT_MOC4 |= (1 << PIN_MOC4); // setar pino moc
- 2e4:	5b 9a       	sbi	0x0b, 3	; 11
- 2e6:	85 e8       	ldi	r24, 0x85	; 133
- 2e8:	8a 95       	dec	r24
- 2ea:	f1 f7       	brne	.-4      	; 0x2e8 <main+0x258>
- 2ec:	00 00       	nop
+ 2f0:	5b 9a       	sbi	0x0b, 3	; 11
+ 2f2:	85 e8       	ldi	r24, 0x85	; 133
+ 2f4:	8a 95       	dec	r24
+ 2f6:	f1 f7       	brne	.-4      	; 0x2f4 <main+0x264>
+ 2f8:	00 00       	nop
 			_delay_us(MOC_SIGNAL_DURATION_US); // delay 50 us
 			PORT_MOC3 &= ~(1 << PIN_MOC3); // des setar pino
- 2ee:	43 98       	cbi	0x08, 3	; 8
+ 2fa:	43 98       	cbi	0x08, 3	; 8
 			PORT_MOC4 &= ~(1 << PIN_MOC4); // des setar pino
- 2f0:	5b 98       	cbi	0x0b, 3	; 11
+ 2fc:	5b 98       	cbi	0x0b, 3	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
- 2f2:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
+ 2fe:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
 			break;
- 2f6:	2d cf       	rjmp	.-422    	; 0x152 <main+0xc2>
+ 302:	2d cf       	rjmp	.-422    	; 0x15e <main+0xce>
 			
 			case TRIGGER_35:
 			PORT_MOC3 |= (1 << PIN_MOC3); // setar pino moc
- 2f8:	43 9a       	sbi	0x08, 3	; 8
+ 304:	43 9a       	sbi	0x08, 3	; 8
 			PORT_MOC5 |= (1 << PIN_MOC5); // setar pino moc
- 2fa:	59 9a       	sbi	0x0b, 1	; 11
- 2fc:	a5 e8       	ldi	r26, 0x85	; 133
- 2fe:	aa 95       	dec	r26
- 300:	f1 f7       	brne	.-4      	; 0x2fe <main+0x26e>
- 302:	00 00       	nop
+ 306:	59 9a       	sbi	0x0b, 1	; 11
+ 308:	a5 e8       	ldi	r26, 0x85	; 133
+ 30a:	aa 95       	dec	r26
+ 30c:	f1 f7       	brne	.-4      	; 0x30a <main+0x27a>
+ 30e:	00 00       	nop
 			_delay_us(MOC_SIGNAL_DURATION_US); // delay 50 us
 			PORT_MOC3 &= ~(1 << PIN_MOC3); // des setar pino
- 304:	43 98       	cbi	0x08, 3	; 8
+ 310:	43 98       	cbi	0x08, 3	; 8
 			PORT_MOC5 &= ~(1 << PIN_MOC5); // des setar pino
- 306:	59 98       	cbi	0x0b, 1	; 11
+ 312:	59 98       	cbi	0x0b, 1	; 11
 			scr_trigger = OFF;	// setar estado trigger de volta para OFF
- 308:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
+ 314:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <scr_trigger>
 			break;
- 30c:	22 cf       	rjmp	.-444    	; 0x152 <main+0xc2>
+ 318:	22 cf       	rjmp	.-444    	; 0x15e <main+0xce>
 
-0000030e <__vector_14>:
+0000031a <__vector_14>:
 #include "timer.h"
 
 
 /* Interrupções dos comparadores dos timers */
 ISR(TIMER0_COMPA_vect)
 {
- 30e:	1f 92       	push	r1
- 310:	0f 92       	push	r0
- 312:	0f b6       	in	r0, 0x3f	; 63
- 314:	0f 92       	push	r0
- 316:	11 24       	eor	r1, r1
- 318:	8f 93       	push	r24
+ 31a:	1f 92       	push	r1
+ 31c:	0f 92       	push	r0
+ 31e:	0f b6       	in	r0, 0x3f	; 63
+ 320:	0f 92       	push	r0
+ 322:	11 24       	eor	r1, r1
+ 324:	8f 93       	push	r24
 {
 	TCCR0B |= (1 << CS02); // ativar timer com prescaler 256
 }
 inline void timer0_stop(void)
 {
 	TCCR0B &= ~(1 << CS02); // desativar timer
- 31a:	85 b5       	in	r24, 0x25	; 37
- 31c:	8b 7f       	andi	r24, 0xFB	; 251
- 31e:	85 bd       	out	0x25, r24	; 37
+ 326:	85 b5       	in	r24, 0x25	; 37
+ 328:	8b 7f       	andi	r24, 0xFB	; 251
+ 32a:	85 bd       	out	0x25, r24	; 37
 	timer0_stop();
 	if (last_state_opto1)
- 320:	80 91 03 01 	lds	r24, 0x0103	; 0x800103 <last_state_opto1>
- 324:	88 23       	and	r24, r24
- 326:	81 f0       	breq	.+32     	; 0x348 <__vector_14+0x3a>
+ 32c:	80 91 03 01 	lds	r24, 0x0103	; 0x800103 <last_state_opto1>
+ 330:	88 23       	and	r24, r24
+ 332:	81 f0       	breq	.+32     	; 0x354 <__vector_14+0x3a>
 	{
 		// semiciclo positivo fase a
 		if (phase_sequence_opto1 == CLOCKWISE)
- 328:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
- 32c:	81 11       	cpse	r24, r1
- 32e:	04 c0       	rjmp	.+8      	; 0x338 <__vector_14+0x2a>
+ 334:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
+ 338:	81 11       	cpse	r24, r1
+ 33a:	04 c0       	rjmp	.+8      	; 0x344 <__vector_14+0x2a>
 		{
 			// ordem de fase normal
 			scr_trigger = TRIGGER_15;
- 330:	81 e0       	ldi	r24, 0x01	; 1
- 332:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 336:	17 c0       	rjmp	.+46     	; 0x366 <__vector_14+0x58>
+ 33c:	81 e0       	ldi	r24, 0x01	; 1
+ 33e:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 342:	17 c0       	rjmp	.+46     	; 0x372 <__vector_14+0x58>
 		}
 		else if (phase_sequence_opto1 == COUNTER_CLOCKWISE)
- 338:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
- 33c:	81 30       	cpi	r24, 0x01	; 1
- 33e:	99 f4       	brne	.+38     	; 0x366 <__vector_14+0x58>
+ 344:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
+ 348:	81 30       	cpi	r24, 0x01	; 1
+ 34a:	99 f4       	brne	.+38     	; 0x372 <__vector_14+0x58>
 		{
 			// ordem de fase trocada
 			scr_trigger = TRIGGER_16;
- 340:	82 e0       	ldi	r24, 0x02	; 2
- 342:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 346:	0f c0       	rjmp	.+30     	; 0x366 <__vector_14+0x58>
+ 34c:	82 e0       	ldi	r24, 0x02	; 2
+ 34e:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 352:	0f c0       	rjmp	.+30     	; 0x372 <__vector_14+0x58>
 		}
 	} 
 	else
 	{
 		// semiciclo positivo fase a
 		if (phase_sequence_opto1 == CLOCKWISE)
- 348:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
- 34c:	81 11       	cpse	r24, r1
- 34e:	04 c0       	rjmp	.+8      	; 0x358 <__vector_14+0x4a>
+ 354:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
+ 358:	81 11       	cpse	r24, r1
+ 35a:	04 c0       	rjmp	.+8      	; 0x364 <__vector_14+0x4a>
 		{
 			// ordem de fase normal
 			scr_trigger = TRIGGER_24;
- 350:	84 e0       	ldi	r24, 0x04	; 4
- 352:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 356:	07 c0       	rjmp	.+14     	; 0x366 <__vector_14+0x58>
+ 35c:	84 e0       	ldi	r24, 0x04	; 4
+ 35e:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 362:	07 c0       	rjmp	.+14     	; 0x372 <__vector_14+0x58>
 		}
 		else if (phase_sequence_opto1 == COUNTER_CLOCKWISE)
- 358:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
- 35c:	81 30       	cpi	r24, 0x01	; 1
- 35e:	19 f4       	brne	.+6      	; 0x366 <__vector_14+0x58>
+ 364:	80 91 09 01 	lds	r24, 0x0109	; 0x800109 <phase_sequence_opto1>
+ 368:	81 30       	cpi	r24, 0x01	; 1
+ 36a:	19 f4       	brne	.+6      	; 0x372 <__vector_14+0x58>
 		{
 			// ordem de fase trocada
 			scr_trigger = TRIGGER_34;
- 360:	85 e0       	ldi	r24, 0x05	; 5
- 362:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 36c:	85 e0       	ldi	r24, 0x05	; 5
+ 36e:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
 		}		
 	}
 	// des-setar a flag de timer
 	timer0_flag = 0;
- 366:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <timer0_flag>
+ 372:	10 92 06 01 	sts	0x0106, r1	; 0x800106 <timer0_flag>
 }
- 36a:	8f 91       	pop	r24
- 36c:	0f 90       	pop	r0
- 36e:	0f be       	out	0x3f, r0	; 63
- 370:	0f 90       	pop	r0
- 372:	1f 90       	pop	r1
- 374:	18 95       	reti
+ 376:	8f 91       	pop	r24
+ 378:	0f 90       	pop	r0
+ 37a:	0f be       	out	0x3f, r0	; 63
+ 37c:	0f 90       	pop	r0
+ 37e:	1f 90       	pop	r1
+ 380:	18 95       	reti
 
-00000376 <__vector_11>:
+00000382 <__vector_11>:
 
 ISR(TIMER1_COMPA_vect)
 {
- 376:	1f 92       	push	r1
- 378:	0f 92       	push	r0
- 37a:	0f b6       	in	r0, 0x3f	; 63
- 37c:	0f 92       	push	r0
- 37e:	11 24       	eor	r1, r1
- 380:	8f 93       	push	r24
+ 382:	1f 92       	push	r1
+ 384:	0f 92       	push	r0
+ 386:	0f b6       	in	r0, 0x3f	; 63
+ 388:	0f 92       	push	r0
+ 38a:	11 24       	eor	r1, r1
+ 38c:	8f 93       	push	r24
 {
 	TCCR1B |= (1 << CS12); // ativar timer com prescaler 256
 }
 inline void timer1_stop(void)
 {
 	TCCR0B &= ~(1 << CS12); // desativar timer
- 382:	85 b5       	in	r24, 0x25	; 37
- 384:	8b 7f       	andi	r24, 0xFB	; 251
- 386:	85 bd       	out	0x25, r24	; 37
+ 38e:	85 b5       	in	r24, 0x25	; 37
+ 390:	8b 7f       	andi	r24, 0xFB	; 251
+ 392:	85 bd       	out	0x25, r24	; 37
 	timer1_stop();
 	if (last_state_opto2)
- 388:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <last_state_opto2>
- 38c:	88 23       	and	r24, r24
- 38e:	81 f0       	breq	.+32     	; 0x3b0 <__vector_11+0x3a>
+ 394:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <last_state_opto2>
+ 398:	88 23       	and	r24, r24
+ 39a:	81 f0       	breq	.+32     	; 0x3bc <__vector_11+0x3a>
 	{
 		// semiciclo positivo fase b
 		if (phase_sequence_opto2 == CLOCKWISE)
- 390:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 394:	81 11       	cpse	r24, r1
- 396:	04 c0       	rjmp	.+8      	; 0x3a0 <__vector_11+0x2a>
+ 39c:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 3a0:	81 11       	cpse	r24, r1
+ 3a2:	04 c0       	rjmp	.+8      	; 0x3ac <__vector_11+0x2a>
 		{
 			// ordem de fase normal
 			scr_trigger = TRIGGER_26;
- 398:	83 e0       	ldi	r24, 0x03	; 3
- 39a:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 39e:	16 c0       	rjmp	.+44     	; 0x3cc <__vector_11+0x56>
+ 3a4:	83 e0       	ldi	r24, 0x03	; 3
+ 3a6:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 3aa:	16 c0       	rjmp	.+44     	; 0x3d8 <__vector_11+0x56>
 		}
 		else if (phase_sequence_opto2 == COUNTER_CLOCKWISE)
- 3a0:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 3a4:	81 30       	cpi	r24, 0x01	; 1
- 3a6:	91 f4       	brne	.+36     	; 0x3cc <__vector_11+0x56>
+ 3ac:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 3b0:	81 30       	cpi	r24, 0x01	; 1
+ 3b2:	91 f4       	brne	.+36     	; 0x3d8 <__vector_11+0x56>
 		{
 			// ordem de fase trocada
 			scr_trigger = TRIGGER_24;
- 3a8:	84 e0       	ldi	r24, 0x04	; 4
- 3aa:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 3ae:	0e c0       	rjmp	.+28     	; 0x3cc <__vector_11+0x56>
+ 3b4:	84 e0       	ldi	r24, 0x04	; 4
+ 3b6:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 3ba:	0e c0       	rjmp	.+28     	; 0x3d8 <__vector_11+0x56>
 		}
 	}
 	else
 	{
 		// semiciclo positivo fase b
 		if (phase_sequence_opto2 == CLOCKWISE)
- 3b0:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 3b4:	81 11       	cpse	r24, r1
- 3b6:	04 c0       	rjmp	.+8      	; 0x3c0 <__vector_11+0x4a>
+ 3bc:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 3c0:	81 11       	cpse	r24, r1
+ 3c2:	04 c0       	rjmp	.+8      	; 0x3cc <__vector_11+0x4a>
 		{
 			// ordem de fase normal
 			scr_trigger = TRIGGER_35;
- 3b8:	86 e0       	ldi	r24, 0x06	; 6
- 3ba:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 3be:	06 c0       	rjmp	.+12     	; 0x3cc <__vector_11+0x56>
+ 3c4:	86 e0       	ldi	r24, 0x06	; 6
+ 3c6:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 3ca:	06 c0       	rjmp	.+12     	; 0x3d8 <__vector_11+0x56>
 		}
 		else if (phase_sequence_opto2 == COUNTER_CLOCKWISE)
- 3c0:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 3c4:	81 30       	cpi	r24, 0x01	; 1
- 3c6:	11 f4       	brne	.+4      	; 0x3cc <__vector_11+0x56>
+ 3cc:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 3d0:	81 30       	cpi	r24, 0x01	; 1
+ 3d2:	11 f4       	brne	.+4      	; 0x3d8 <__vector_11+0x56>
 		{
 			// ordem de fase trocada
 			scr_trigger = TRIGGER_15;
- 3c8:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 3d4:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
 		}
 	}
 	// des-setar a flag de timer
 	timer1_flag = 0;
- 3cc:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
+ 3d8:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
 }
- 3d0:	8f 91       	pop	r24
- 3d2:	0f 90       	pop	r0
- 3d4:	0f be       	out	0x3f, r0	; 63
- 3d6:	0f 90       	pop	r0
- 3d8:	1f 90       	pop	r1
- 3da:	18 95       	reti
+ 3dc:	8f 91       	pop	r24
+ 3de:	0f 90       	pop	r0
+ 3e0:	0f be       	out	0x3f, r0	; 63
+ 3e2:	0f 90       	pop	r0
+ 3e4:	1f 90       	pop	r1
+ 3e6:	18 95       	reti
 
-000003dc <__vector_7>:
+000003e8 <__vector_7>:
 
 ISR(TIMER2_COMPA_vect)
 {
- 3dc:	1f 92       	push	r1
- 3de:	0f 92       	push	r0
- 3e0:	0f b6       	in	r0, 0x3f	; 63
- 3e2:	0f 92       	push	r0
- 3e4:	11 24       	eor	r1, r1
- 3e6:	8f 93       	push	r24
- 3e8:	ef 93       	push	r30
- 3ea:	ff 93       	push	r31
+ 3e8:	1f 92       	push	r1
+ 3ea:	0f 92       	push	r0
+ 3ec:	0f b6       	in	r0, 0x3f	; 63
+ 3ee:	0f 92       	push	r0
+ 3f0:	11 24       	eor	r1, r1
+ 3f2:	8f 93       	push	r24
+ 3f4:	ef 93       	push	r30
+ 3f6:	ff 93       	push	r31
 {
 	TCCR2B |= (1 << CS22) | (1 << CS21);
 }
 inline void timer2_stop(void)
 {
 	TCCR2B &= ~(1 << CS22) | (1 << CS21);
- 3ec:	e1 eb       	ldi	r30, 0xB1	; 177
- 3ee:	f0 e0       	ldi	r31, 0x00	; 0
- 3f0:	80 81       	ld	r24, Z
- 3f2:	8b 7f       	andi	r24, 0xFB	; 251
- 3f4:	80 83       	st	Z, r24
+ 3f8:	e1 eb       	ldi	r30, 0xB1	; 177
+ 3fa:	f0 e0       	ldi	r31, 0x00	; 0
+ 3fc:	80 81       	ld	r24, Z
+ 3fe:	8b 7f       	andi	r24, 0xFB	; 251
+ 400:	80 83       	st	Z, r24
 		
 	timer2_stop();
 	if (last_state_opto3)
- 3f6:	80 91 04 01 	lds	r24, 0x0104	; 0x800104 <last_state_opto3>
- 3fa:	88 23       	and	r24, r24
- 3fc:	81 f0       	breq	.+32     	; 0x41e <__LOCK_REGION_LENGTH__+0x1e>
+ 402:	80 91 04 01 	lds	r24, 0x0104	; 0x800104 <last_state_opto3>
+ 406:	88 23       	and	r24, r24
+ 408:	81 f0       	breq	.+32     	; 0x42a <__LOCK_REGION_LENGTH__+0x2a>
 	{
 		// semiciclo positivo fase c
 		if (phase_sequence_opto2 == CLOCKWISE)
- 3fe:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 402:	81 11       	cpse	r24, r1
- 404:	04 c0       	rjmp	.+8      	; 0x40e <__LOCK_REGION_LENGTH__+0xe>
+ 40a:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 40e:	81 11       	cpse	r24, r1
+ 410:	04 c0       	rjmp	.+8      	; 0x41a <__LOCK_REGION_LENGTH__+0x1a>
 		{
 			// ordem de fase normal
 			scr_trigger = TRIGGER_34;
- 406:	85 e0       	ldi	r24, 0x05	; 5
- 408:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 40c:	17 c0       	rjmp	.+46     	; 0x43c <__LOCK_REGION_LENGTH__+0x3c>
+ 412:	85 e0       	ldi	r24, 0x05	; 5
+ 414:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 418:	17 c0       	rjmp	.+46     	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
 		}
 		else if (phase_sequence_opto2 == COUNTER_CLOCKWISE)
- 40e:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 412:	81 30       	cpi	r24, 0x01	; 1
- 414:	99 f4       	brne	.+38     	; 0x43c <__LOCK_REGION_LENGTH__+0x3c>
+ 41a:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 41e:	81 30       	cpi	r24, 0x01	; 1
+ 420:	99 f4       	brne	.+38     	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
 		{
 			// ordem de fase trocada
 			scr_trigger = TRIGGER_35;
- 416:	86 e0       	ldi	r24, 0x06	; 6
- 418:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 41c:	0f c0       	rjmp	.+30     	; 0x43c <__LOCK_REGION_LENGTH__+0x3c>
+ 422:	86 e0       	ldi	r24, 0x06	; 6
+ 424:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 428:	0f c0       	rjmp	.+30     	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
 		}
 	}
 	else
 	{
 		// semiciclo positivo fase c
 		if (phase_sequence_opto2 == CLOCKWISE)
- 41e:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 422:	81 11       	cpse	r24, r1
- 424:	04 c0       	rjmp	.+8      	; 0x42e <__LOCK_REGION_LENGTH__+0x2e>
+ 42a:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 42e:	81 11       	cpse	r24, r1
+ 430:	04 c0       	rjmp	.+8      	; 0x43a <__LOCK_REGION_LENGTH__+0x3a>
 		{
 			// ordem de fase normal
 			scr_trigger = TRIGGER_16;
- 426:	82 e0       	ldi	r24, 0x02	; 2
- 428:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
- 42c:	07 c0       	rjmp	.+14     	; 0x43c <__LOCK_REGION_LENGTH__+0x3c>
+ 432:	82 e0       	ldi	r24, 0x02	; 2
+ 434:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 438:	07 c0       	rjmp	.+14     	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
 		}
 		else if (phase_sequence_opto2 == COUNTER_CLOCKWISE)
- 42e:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
- 432:	81 30       	cpi	r24, 0x01	; 1
- 434:	19 f4       	brne	.+6      	; 0x43c <__LOCK_REGION_LENGTH__+0x3c>
+ 43a:	80 91 07 01 	lds	r24, 0x0107	; 0x800107 <phase_sequence_opto2>
+ 43e:	81 30       	cpi	r24, 0x01	; 1
+ 440:	19 f4       	brne	.+6      	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
 		{
 			// ordem de fase trocada
 			scr_trigger = TRIGGER_26;
- 436:	83 e0       	ldi	r24, 0x03	; 3
- 438:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
+ 442:	83 e0       	ldi	r24, 0x03	; 3
+ 444:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <scr_trigger>
 		}
 	}
 	// des-setar a flag de timer
 	timer2_flag = 0;
- 43c:	10 92 05 01 	sts	0x0105, r1	; 0x800105 <timer2_flag>
+ 448:	10 92 05 01 	sts	0x0105, r1	; 0x800105 <timer2_flag>
 }
- 440:	ff 91       	pop	r31
- 442:	ef 91       	pop	r30
- 444:	8f 91       	pop	r24
- 446:	0f 90       	pop	r0
- 448:	0f be       	out	0x3f, r0	; 63
- 44a:	0f 90       	pop	r0
- 44c:	1f 90       	pop	r1
- 44e:	18 95       	reti
+ 44c:	ff 91       	pop	r31
+ 44e:	ef 91       	pop	r30
+ 450:	8f 91       	pop	r24
+ 452:	0f 90       	pop	r0
+ 454:	0f be       	out	0x3f, r0	; 63
+ 456:	0f 90       	pop	r0
+ 458:	1f 90       	pop	r1
+ 45a:	18 95       	reti
 
-00000450 <__umulhisi3>:
- 450:	a2 9f       	mul	r26, r18
- 452:	b0 01       	movw	r22, r0
- 454:	b3 9f       	mul	r27, r19
- 456:	c0 01       	movw	r24, r0
- 458:	a3 9f       	mul	r26, r19
- 45a:	70 0d       	add	r23, r0
- 45c:	81 1d       	adc	r24, r1
- 45e:	11 24       	eor	r1, r1
- 460:	91 1d       	adc	r25, r1
- 462:	b2 9f       	mul	r27, r18
- 464:	70 0d       	add	r23, r0
- 466:	81 1d       	adc	r24, r1
- 468:	11 24       	eor	r1, r1
- 46a:	91 1d       	adc	r25, r1
- 46c:	08 95       	ret
+0000045c <__umulhisi3>:
+ 45c:	a2 9f       	mul	r26, r18
+ 45e:	b0 01       	movw	r22, r0
+ 460:	b3 9f       	mul	r27, r19
+ 462:	c0 01       	movw	r24, r0
+ 464:	a3 9f       	mul	r26, r19
+ 466:	70 0d       	add	r23, r0
+ 468:	81 1d       	adc	r24, r1
+ 46a:	11 24       	eor	r1, r1
+ 46c:	91 1d       	adc	r25, r1
+ 46e:	b2 9f       	mul	r27, r18
+ 470:	70 0d       	add	r23, r0
+ 472:	81 1d       	adc	r24, r1
+ 474:	11 24       	eor	r1, r1
+ 476:	91 1d       	adc	r25, r1
+ 478:	08 95       	ret
 
-0000046e <_exit>:
- 46e:	f8 94       	cli
+0000047a <_exit>:
+ 47a:	f8 94       	cli
 
-00000470 <__stop_program>:
- 470:	ff cf       	rjmp	.-2      	; 0x470 <__stop_program>
+0000047c <__stop_program>:
+ 47c:	ff cf       	rjmp	.-2      	; 0x47c <__stop_program>

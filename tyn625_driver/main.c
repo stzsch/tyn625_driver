@@ -16,7 +16,7 @@
 
 int main(void)
 {
-	// clock_setup(); // Desativado por já ser 8 MHz
+	clock_setup(); 
 	adc_setup();
 	gpio_setup();
 	timer0_setup();
