@@ -37,6 +37,7 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../adc.c \
 ../main.c \
 ../timer.c
 
@@ -48,18 +49,22 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+adc.o \
 main.o \
 timer.o
 
 OBJS_AS_ARGS +=  \
+adc.o \
 main.o \
 timer.o
 
 C_DEPS +=  \
+adc.d \
 main.d \
 timer.d
 
 C_DEPS_AS_ARGS +=  \
+adc.d \
 main.d \
 timer.d
 
@@ -77,6 +82,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

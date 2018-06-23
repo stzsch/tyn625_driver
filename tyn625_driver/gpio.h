@@ -5,10 +5,8 @@
  *  Author: Douglas
  */ 
 
-
 #pragma once
 #include <avr/io.h>
-
 
 /* Defines para pinos de entrada, dos optos e do pot*/
 
@@ -16,9 +14,11 @@
 #define PORT_OPTO2	PORTB
 #define PORT_OPTO3	PORTB
 
-#define PIN_OPTO1	PORTB3
-#define PIN_OPTO2	PORTB2
-#define PIN_OPTO3	PORTB1
+#define PIN_OPTO1	PINB3
+#define PIN_OPTO2	PINB2
+#define PIN_OPTO3	PINB1
+
+#define	ADC_PIN		2	
 
 #define ADC_POT_H	ADCH
 #define ADC_POT_L	ADCL
@@ -51,7 +51,7 @@
 
 #define MOC_SIGNAL_DURATION_US	50
 
-static inline void gpio_setup(void)
+inline void gpio_setup(void)
 {
 	// Configurar pinos dos MOCs como saídas
 	DDR_MOC1 |= (1 << PIN_MOC1);
@@ -62,6 +62,8 @@ static inline void gpio_setup(void)
 	DDR_MOC6 |= (1 << PIN_MOC6);
 	
 	DDRB = 0x00;
-	PORTB = 0x00;
+	// PORTB |= (1 << PORTB1);
+	// PORTB |= (1 << PORTB2);
+	// PORTB |= (1 << PORTB3);
 }
 
